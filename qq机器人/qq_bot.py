@@ -22,9 +22,10 @@ if not friends == []:
 
     for i in range(len(friend_list)):
 
+        friend_ = bot.List('buddy', friend_list[i])[0]
+
         if  friend_list[i] == "新伤":
 
-             friend_ = bot.List('buddy',friend_list[i])[0]
 
              content1 = "机器人测试！！！！！！！！！！！"
 
@@ -33,4 +34,7 @@ if not friends == []:
              bot.SendTo(friend_,content1,resendOn1202 = True)
 
         else:
-             bot.SendTo(friend_,content2,resendOn1202 = True)
+
+            pass
+
+            # bot.SendTo(friend_,content2,resendOn1202 = True)
