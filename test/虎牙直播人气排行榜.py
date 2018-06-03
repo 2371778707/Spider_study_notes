@@ -1,5 +1,6 @@
 from urllib import request
 import re
+import os
 class 虎牙直播王者荣耀人气排名:
 
     网址="http://www.huya.com/g/2336"
@@ -61,4 +62,8 @@ class 虎牙直播王者荣耀人气排名:
         所有主播=self.__排行(所有主播)
         self.__显示(所有主播)
 
-虎牙直播王者荣耀人气排名().进入()
+while True:
+
+    os.system('clear')
+
+    虎牙直播王者荣耀人气排名().进入()
