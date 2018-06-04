@@ -13,18 +13,14 @@ def link():
 
     #只会返回一个，列表长度为1
     result1 = re.findall(r1,html)
-
     #非贪婪模式
     result2= re.findall(r2,result1[0])
 
-
     result3 = []
-
 
     for i in range(len(result2)):
 
         result3.append(re.findall(r3,result2[i]))
-
 
     with open('音乐地址.txt','w',encoding='utf-8') as f:
 

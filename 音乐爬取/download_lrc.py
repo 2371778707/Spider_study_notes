@@ -23,7 +23,6 @@ music_link_list =music_link_str.split('\n')
 
 #去掉最后一个空。。字符
 
-
 music_link_list = music_link_list[0:len(music_link_list)-1]
 
 
