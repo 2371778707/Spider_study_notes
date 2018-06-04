@@ -13,8 +13,6 @@ path = os.path.join(os.getcwd(),"音乐地址.txt")
 
 path1 = os.path.join(os.getcwd(), '歌词')
 
-
-
 with open(path,'r',encoding='utf-8') as f:
     music_link_str=f.read()
     f.close()

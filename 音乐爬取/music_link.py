@@ -29,5 +29,3 @@ def link():
             f.write(''.join(result3[i])+'\n')
 
         f.close()
-
-
