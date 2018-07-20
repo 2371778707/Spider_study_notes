@@ -19,8 +19,6 @@ with open(path,'r',encoding='utf-8') as f:
 
 music_link_list =music_link_str.split('\n')
 
-#去掉最后一个空。。字符
-
 music_link_list = music_link_list[0:len(music_link_list)-1]
 
 
@@ -46,6 +44,7 @@ for i in range(len(music_link_list)):
         try :
 
             list1 = result2[0].split('>')
+
         except Exception :
 
             print("对不起，网络错误！请重新运行！")
@@ -66,27 +65,17 @@ for i in range(len(music_link_list)):
            # 处理名字中有/的
 
 
-        include_ = ''.join(result1[0]).split('/')
+        IrlName =''.join(result1[0]).replace("/","-")
 
 
-        if len(include_) == 0:
-
-            with open(path1+'/'+''.join(result1[0])+'.txt','w') as f:
 
 
-                  for music in music_lrc:
+        with open(path1+'/'+IrlName+'.txt','w') as f:
 
-                     f.write(''.join(music)+'\n')
 
-                  f.close()
+              for music in music_lrc:
 
-        else:
+                 f.write(''.join(music)+'\n')
 
-            with open(path1+'/'+''.join(include_)+'.txt','w') as f:
-
-                for music in music_lrc:
-
-                    f.write(''.join(music) + '\n')
-
-                f.close()
+              f.close()
 
