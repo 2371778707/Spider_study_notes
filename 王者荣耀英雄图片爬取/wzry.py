@@ -1,147 +1,106 @@
 from urllib import  request
-from urllib.request import urlretrieve
-import re
-import time
-import os
+from  urllib.request import urlretrieve
+import os,json
 
 def get_html(url):
     res = request.urlopen(url)
-    html = res.read().decode('gbk')
+    html = res.read().decode('utf8')
+    html =html.encode('utf8')[3:].decode('utf8')
+    html = html.replace("&#10;","")
+    #print(html)
     return html
 
-def re_html(html):
+def get_hero_list(html):
+    hero = json.loads(html)
+    #print(hero)
+    return  hero
+def get_ImgIconUrl(hero):
+    Icon_url=[]
+    for i in enumerate(hero):
+        ename = i[1]["ename"]
+        url = "https://game.gtimg.cn/images/yxzj/img201606/heroimg/" + str(ename) + "/" + str(ename) + ".jpg"
+        Icon_url.append(url)
+       # print(url)
+    return Icon_url
 
-    r1 = r'<ul class="herolist clearfix">([\s\S]*?)</ul>'
-    r2 = r'<a href="([\S\s]*?)" target="_blank">'
-    html = re.findall(r1,html)
-    links = re.findall(r2,html[0])
-    return links
+def makeFile():
+    path = os.path.join(os.getcwd(), '王者荣耀图片文件')
+    if not os.path.exists(path):
+        os.mkdir(path)
+        _type = ["战士", "法师", "坦克", "刺客", "射手", "辅助"]
+        for i in  range(len(_type)):
+            os.mkdir(path+"/"+_type[i])
+    return path
 
-def change_link(links):
-
-        for i in range(len(links)):
-            links[i] = ('http://pvp.qq.com/web201605/'+links[i])
-        return links
-
-
-def write_links(links):
-    with open('王者荣耀英雄图片链接.txt','w',encoding='utf-8')as f:
-        for link in links:
-            f.write(link+'\n')
-            f.flush()
-        f.close()
-
-def read_links(path):
-    links = []
-    with open(path,'r',encoding='utf-8')as f:
-        all_link = f.read()
-        f.close()
-    links=all_link.split('\n')[:-1]
-
-    return links
-
-def get_hero_html(links):
-    image_links =[]
-    name_list = []
-
-    for link in links:
-
-        r1 = r'<div class="zk-con1 zk-con" style="background:url\(\'([\S\s]*?)\'\) center 0">'
-        r2 = r'<h2 class="cover-name">([\s\S]*?)</h2>'
-        res = request.urlopen(link)
-        #解码
-        html = res.read().decode('gbk')
-        image_link_0 = 'http:'
-        image_link_1 = re.findall(r1,html)
-        image_link = image_link_0 + image_link_1[0]
-        name = re.findall(r2,html)
-        name_list.append(name[0])
-        image_links.append(image_link)
-
-    return image_links,name_list
-
-
-def skin_link(image_links):
-
-    all_image_links=[]
-    skin_count = []
-
-    for i in range(len(image_links)):
-
-
-        for x in range(8):
-
-            image_link = image_links[i][0:-5] + str(x + 1) + '.jpg'
-
-            try:
-
-                res = request.urlopen(image_link)
-
-            except Exception:
-
-                skin_count.append(x)
-
-                break
-
-
-            if res.code == 200:
-
-                all_image_links.append(image_link)
-
-
-    return  all_image_links,skin_count
-
-
-
-def deal_filename(skin_count,name_list):
-
-    hero_name = []
-
-    for i in range(len(skin_count)):
-
-        for j in range(skin_count[i]):
-
-            hero_name.append(''.join(name_list[i])+str(j+1))
-
+def makeFileIcon():
+    path = os.path.join(os.getcwd(), '王者荣耀图片文件Icon')
+    if not os.path.exists(path):
+        os.mkdir(path)
+    return path
+def get_hero_name(hero):
+    hero_name=[]
+    for i in enumerate(hero):
+        cname = i[1]["cname"]
+        hero_name.append(cname)
     return hero_name
 
+def download_image(Iconurl,name,pathIcon):
+    for i in range(len(Iconurl)):
+        urlretrieve(Iconurl[i],"%s.jpg"%(pathIcon+"/"+name[i]))
+        print("正在下载"+name[i]+"...")
 
-def download_image(all_image_links,hero_name):
+def get_hero_type(hero_type):
+    _type = ["战士", "法师", "坦克", "刺客", "射手", "辅助"]
+    return _type[hero_type-1]
 
-    path = os.path.join(os.getcwd(),'王者荣耀图片文件')
-    if  not os.path.exists(path):
 
-        os.mkdir(path)
+def get_skin_name(hero):
+    skin_Name = []
+    for i in enumerate(hero):
+        skin_name = i[1]["skin_name"]
+        skin_Name.append(skin_name)
+    #print(skin_Name)
+    return skin_Name
 
-    for i in range(len(all_image_links)):
+def get_skin_num(skin_name):
+    sname = []
+    snum = []
+    for i in  range(len(skin_name)):
+        skins = skin_name[i]
+        who = skins.split("|")
+        sname.append(who)
+        snum.append(len(who))
+    return  sname,snum
 
-        name = hero_name[i]
-
-        print('第' + str(i + 1) + '张下载中......')
-
-        urlretrieve(all_image_links[i], '%s.jpg' % (os.path.join(path,name)))
-        print('第' + str(i + 1) + '张下载完成\n')
-
-        if i+1 == len(all_image_links):
-            print('全部下载完成！！！')
-
+def download_Img(hero,name,sname,snum,path):
+    for  i in range(len(hero)):
+        ename = hero[i]["ename"]
+        for j in range(snum[i]):
+            url = "https://game.gtimg.cn/images/yxzj/img201606/skin/hero-info/"+str(ename)+"/"+str(ename)+"-bigskin-"+str(j+1)+".jpg"
+           # print(url)
+            urlretrieve(url,"%s.jpg"%(path+"/"+get_hero_type(hero[i]["hero_type"])+"/"+sname[i][j]))
+            print("正在下载"+sname[i][j]+".jpg ...")
+        print(name[i]+"英雄图片下载...结束\n")
 
 def main():
+    url = "https://pvp.qq.com/web201605/js/herolist.json"
+    html = get_html(url)
+    hero = get_hero_list(html)
+    Icon_url = get_ImgIconUrl(hero)
+    pathIcon = makeFileIcon()
+    path = makeFile()
+    name = get_hero_name(hero)
+    #下载头像图标
+    download_image(Icon_url,name,pathIcon)
+    skin_name = get_skin_name(hero)
+    sname,snum =get_skin_num(skin_name)
+    #下载大图片
+    download_Img(hero,name,sname,snum,path)
 
-    url = 'http://pvp.qq.com/web201605/herolist.shtml'
-    path = os.path.join(os.getcwd(),'王者荣耀英雄图片链接.txt')
-    if  not  os.path.exists(path):
-        html =  get_html(url)
-        links =re_html(html)
-        links = change_link(links)
-        write_links(links)
-    links = read_links(path)
-    image_links,name_list= get_hero_html(links)
-    all_image_links,skin_count = skin_link(image_links)
-    hero_name = deal_filename(skin_count,name_list)
-    download_image(all_image_links,hero_name)
+
+
+
 
 
 if __name__ == '__main__':
     main()
-
